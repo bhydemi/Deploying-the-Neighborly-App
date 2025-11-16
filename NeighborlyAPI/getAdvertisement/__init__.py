@@ -1,6 +1,7 @@
 import azure.functions as func
 import pymongo
 import json
+import os
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 import logging
@@ -11,12 +12,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     id = req.params.get('id')
     print("--------------->", id)
-    
+
     if id:
         try:
-            url = "localhost"  # TODO: Update with appropriate MongoDB connection information
-            client = pymongo.MongoClient(url)
-            database = client['azure']
+            url = os.environ.get('MyDbConnection')
+            client = pymongo.MongoClient(url, tlsAllowInvalidCertificates=True)
+            database = client['neighborlydb']
             collection = database['advertisements']
            
             query = {'_id': ObjectId(id)}
